@@ -13,15 +13,23 @@
       <div class="search-bar">
         <!-- tab栏 -->
         <el-row type="flex" class="search-tab">
-          <span v-for="(item,index) in searchList" :key="index" :class='{active:current === index}' @click="handleChange(index)">
+          <span
+            v-for="(item,index) in searchList"
+            :key="index"
+            :class="{active:current === index}"
+            @click="handleChange(index)"
+          >
             <i>{{item.name}}</i>
           </span>
         </el-row>
 
         <!-- 输入框 -->
         <el-row type="flex" align="middle" class="search-input">
-          <input :placeholder="searchList[current].placeholder"/>
-          <i class="el-icon-search"></i>
+          <input
+            :placeholder="searchList[current].placeholder"
+            v-model="inputContent" @keyup.enter="getCity"
+          />
+          <i class="el-icon-search" @click="getCity"></i>
         </el-row>
       </div>
     </div>
@@ -47,31 +55,68 @@ export default {
   data() {
     return {
       carouselList: [],
-      searchList:[
+      searchList: [
         {
-          name:'攻略',
-          placeholder:'搜索城市'
+          name: "攻略",
+          placeholder: "搜索城市"
         },
         {
-          name:'酒店',
-          placeholder:'请输入城市搜索酒店'
+          name: "酒店",
+          placeholder: "请输入城市搜索酒店"
         },
         {
-          name:'机票',
-          placeholder:''
+          name: "机票",
+          placeholder: ""
         }
       ],
-      current:0
+      current: 0,
+      // 输入框内容
+      inputContent: ""
     };
   },
-  methods:{
-    handleChange(index){
-      if(index < 2){
-        this.current = index
-      } else{
+  methods: {
+    handleChange(index) {
+      if (index < 2) {
+        this.current = index;
+      } else {
         this.$router.push({
-          path:'/planeTicket'
-        })
+          path: "/planeTicket"
+        });
+      }
+    },
+    // 当用户输入内容后进行搜索
+    getCity() {
+      // 内容不为空时进行查找
+      if (this.inputContent) {
+        var index = this.current
+        var name = this.searchList[index].name;
+        // 酒店栏搜索项及跳转
+        if (name === "酒店") {
+          this.$axios({
+            url:'/cities',
+            method:'get',
+            params:{
+              name:this.inputContent
+            }
+          }).then(async result=>{
+            console.log(result)
+            this.$router.push({
+              path:'/hotel',
+              query:{
+                city:result.data.data[0].id
+              }
+            })
+          }).catch(err=>{
+            console.log(err)
+          })
+        }
+      }
+      // 提示输入搜索内容
+      else{
+         this.$alert('请输入搜索内容', '提示', {
+          confirmButtonText: '确定',
+          type:'warning'
+         })
       }
     }
   },
