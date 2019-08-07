@@ -8,7 +8,7 @@
         :key="index"
         :model="item"
         :rules="rules"
-        :ref="`userForm${index}`"
+        :ref="`userForm` + index"
       >
         <!-- 乘机人类型 -->
         <div class="member-info-item">
@@ -188,6 +188,8 @@ export default {
           }
         }
       }
+     
+
       try {
         let result = await this.$refs.contactForm.validate();
       } catch (err) {
@@ -211,7 +213,13 @@ export default {
               Authorization: `Bearer ${userInfo.token || 'NO TOKEN'}`
           }
       }).then(result=>{
-          console.log(result)
+        console.log(result)
+          this.$router.push({
+            path:'/planeTicket/pay',
+            query:{
+              id:result.data.data.id
+            }
+          })
       }).catch(err=>{
           console.log(err)
       })
