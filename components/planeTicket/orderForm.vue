@@ -8,7 +8,7 @@
         :key="index"
         :model="item"
         :rules="rules"
-        :ref="`userForm` + index"
+        :ref="`userForm${index}`"
       >
         <!-- 乘机人类型 -->
         <div class="member-info-item">
@@ -175,24 +175,19 @@ export default {
 
     // 提交订单
     async handleSubmit() {
-      var arr = new Array(this.order.users.length)
-      for(var i = 0; i < arr.length; i++){
-          arr[i] = i
-      }
-      for (const index of arr) {
-        try {
-          let contactResult = await this.$refs["userForm" + index].validate();
+      for(var index = 0; index < this.order.users.length; index++){
+          try {
+          let contactResult = await this.$refs["userForm" + index][0].validate();
         } catch (err) {
           if (!err) {
             this.$alert("请完善乘机人信息", "提示", {
               confirmButtonText: "确定",
               type: "warn"
-            });
+            })
             return
           }
         }
       }
-
       try {
         let result = await this.$refs.contactForm.validate();
       } catch (err) {
