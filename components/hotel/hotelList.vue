@@ -234,8 +234,7 @@ export default {
   },
   methods: {
     handle(value) {
-      console.log(123);
-      console.log(value);
+      // console.log(value);
     },
     // 获取筛选选项接口
     async getOptions() {
@@ -248,13 +247,13 @@ export default {
 
     // 点击分页时调用接口
     async handlePageNum(v) {
-      this.$router.push({
-        path: "/hotel",
-        query: {
-          _start: (v - 1) * 5,
-          city: 199 //this.$route.query.id
-        }
-      });
+      // this.$router.push({
+      //   path: "/hotel",
+      //   query: {
+      //     _start: (v - 1) * 5,
+      //     city: 199 //this.$route.query.id
+      //   }
+      // });
     }
   },
   mounted() {
