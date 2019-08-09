@@ -30,8 +30,13 @@ export default {
         // 找出所有酒店的坐标并配置数字图标
         newVal.data.forEach((item, index) => {
           var arr = Object.values(item.location);
+          var markerContent =
+          `<div class="custom-content-marker">
+          <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png" class="point"><span class="text">${index+1}</span>
+          </div>`;
+          
           var obj = {
-            icon: `//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png`,
+            content: markerContent,
             position: arr
           };
           show.push(obj);
@@ -67,7 +72,7 @@ export default {
           hotelsLoaction.forEach(function(marker) {
             new AMap.Marker({
               map: hotelMap,
-              icon: marker.icon,
+              content: marker.content,
               position: [marker.position[1], marker.position[0]],
               offset: new AMap.Pixel(-13, -30)
             });
@@ -93,6 +98,18 @@ export default {
     width: 25px;
     height: 34px;
   }
+  /deep/ .point{
+    height:40px;
+    position:relative;
+  }
+  /deep/ .text{
+      color:white;
+      position:absolute;
+      top:3px;
+      left:10px;
+      font-weight:400;
+    }
 }
+
 </style>
 

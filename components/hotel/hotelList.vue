@@ -6,13 +6,17 @@
       <el-col :span="5" type="flex" justify="space-between" align="middle" class="hotelNavLeft">
         <el-col :span="12">价格</el-col>
         <el-col :span="12">0-4000</el-col>
+        <!-- 进度条 -->
+        <div class="progress">
+          <el-slider v-model="percentage"></el-slider>
+        </div>
       </el-col>
       <!-- 右边筛选部分 -->
       <el-col :span="19" class="hotelNavRight">
         <el-row>
           <el-col :span="5" class="hotelLevel">
             <span style="display:block">住宿等级</span>
-            <el-select v-model="level" placeholder="不限" multiple @change="handle" collapse-tags>
+            <el-select v-model="level" placeholder="不限" multiple collapse-tags>
               <el-option
                 v-for="item in options.levels"
                 :key="item.id"
@@ -122,7 +126,7 @@
     </el-row>
     <div v-if="selected.length===0" class="noneList">sorry!暂无任何数据</div>
     <!-- 分页 -->
-    <el-pagination @current-change="handlePageNum" layout="prev, pager, next" :total="200"></el-pagination>
+    <el-pagination @current-change="handlePageNum" layout="prev, pager, next" :total="200" :current-page.sync="currentPage"></el-pagination>
   </div>
 </template>
 
@@ -132,22 +136,27 @@ export default {
     // 酒店列表数据
     webData: {
       type: Object,
-      default: {
-        data: [],
-        nextStart: 0,
-        total: 0
-      }
+    },
+    liveData:{
+      type:Object
     }
   },
   data() {
     return {
-      options: {}, //选项的对象，有四个属性，每个属性为数组
+      options: {
+        types:[],
+        levels:[],
+        assets:[],
+        brands:[],
+      }, //选项的对象，有四个属性，每个属性为数组
       level: [], //绑定星级筛选数组
       assets: [], //绑定设施筛选数组
       brands: [], //绑定品牌筛选数组
       types: [], //绑定类型筛选数组
       total: [], //列表总条数
-      hotelList: [] // 缓存的酒店列表数组
+      hotelList: [], // 缓存的酒店列表数组
+      percentage: 100,
+      currentPage:1
     };
   },
   computed: {
@@ -233,9 +242,6 @@ export default {
     }
   },
   methods: {
-    handle(value) {
-      // console.log(value);
-    },
     // 获取筛选选项接口
     async getOptions() {
       var res = await this.$axios({
@@ -245,24 +251,49 @@ export default {
       this.options = data;
     },
 
-    // 点击分页时调用接口
-    async handlePageNum(v) {
-      // this.$router.push({
-      //   path: "/hotel",
-      //   query: {
-      //     _start: (v - 1) * 5,
-      //     city: 199 //this.$route.query.id
-      //   }
-      // });
-    }
+    // 点击分页时传值到父组件进行数据更新
+    handlePageNum(page) {
+      if(this.liveData.enterTime && this.liveData.leaveTime && person){
+        var obj = {
+          _start:(page-1) * 5,
+          ...this.liveData
+        }
+        this.$emit("changeData",obj)
+        // 分页时将页码传给各个兄弟组件
+        this.$emit("sendPage",page)
+      }
+      else{
+        var obj = {
+           _start:(page-1) * 5
+        }
+        this.$emit("changeData",obj)
+        // 分页时将页码传给各个兄弟组件
+        this.$emit("sendPage",page)
+      }
+    },
+  },
+
+  watch:{
+    webData:{
+      handler(newVal,oldVal){
+        this.hotelList = JSON.parse(JSON.stringify(this.webData.data))
+        // 页面加载完获取筛选选项
+        this.getOptions();
+      },
+      immediate:true,
+      deep:true
+    },
+
+   '$route'(){
+     this.currentPage = 1
+   }
   },
   mounted() {
-    // 用定时器获取父组件传值，异步
-    setTimeout(() => {
-      this.hotelList = JSON.parse(JSON.stringify(this.webData.data));
-    }, 1000);
-    // 页面加载完获取筛选选项
-    this.getOptions();
+    
+  },
+
+  updated(){
+    
   }
 };
 </script>
@@ -276,6 +307,17 @@ export default {
   .hotelNav {
     border: 1px solid #ddd;
     padding: 10px 5px 10px 5px;
+    .hotelNavLeft{
+      /deep/ .el-progress__text{
+         display:none
+      }
+      .progress{
+        margin-top:20px;
+        /deep/ .el-slider{
+          width:80%;
+        }
+      }
+    }
     .hotelNavRight {
       //   border: 1px solid red;
       padding: 15px 0;
@@ -355,7 +397,7 @@ export default {
 }
 .hotelLevel {
   /deep/ .el-input {
-    width: 130px;
+    width: 135px;
   }
 }
 
