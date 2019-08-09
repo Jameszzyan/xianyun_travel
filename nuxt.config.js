@@ -15,9 +15,16 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', type: 'text/css', href: '//at.alicdn.com/t/font_1168872_ehvuah8v57g.css'} // 新增全局字体样式
-    ]
+      { rel: 'stylesheet', type: 'text/css', href: '//at.alicdn.com/t/font_1168872_ehvuah8v57g.css'}, // 新增全局字体样式
+      { rel: 'stylesheet', type: 'text/css', href: '//at.alicdn.com/t/font_1340932_yypb0hys27.css'},
+      {rel:"stylesheet",type:'text/css', href:"https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"}
+    ],
+    script:[
+      {src:"https://webapi.amap.com/maps?v=1.4.15&key=31b1cb9437f926245afa7b9db5800e88"}
+    ],
   },
+
+  
 
   /*
   ** Customize the progress-bar color
