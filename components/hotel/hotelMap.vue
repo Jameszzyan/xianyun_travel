@@ -59,35 +59,35 @@ export default {
         zoom: 11, //级别
         center: [116.397428, 39.90923] //中心点坐标
       });
-      hotelMap.setCity(this.$route.query.name);
 
       //   设置每个覆盖物
       //   需设置判断条件防止异步请求不到数据
       if (hotelsLoaction) {
-        hotelsLoaction.forEach(function(marker) {
-          new AMap.Marker({
-            map: hotelMap,
-            icon: marker.icon,
-            position: [marker.position[1], marker.position[0]],
-            offset: new AMap.Pixel(-13, -30)
+        if (hotelsLoaction.length > 0) {
+          hotelsLoaction.forEach(function(marker) {
+            new AMap.Marker({
+              map: hotelMap,
+              icon: marker.icon,
+              position: [marker.position[1], marker.position[0]],
+              offset: new AMap.Pixel(-13, -30)
+            });
           });
-        });
-        hotelMap.setFitView();
+          hotelMap.setFitView();
+        } else {
+          hotelMap.setCity(this.$route.query.name);
+        }
       }
-     
     }
   },
 
-  mounted() {
-    
-  }
+  mounted() {}
 };
 </script>
 
 <style lang="less" scoped>
 #container {
   height: 300px;
-  width: 400px;
+  width: 480px;
   margin-top: 30px;
   /deep/ .amap-icon img {
     width: 25px;
