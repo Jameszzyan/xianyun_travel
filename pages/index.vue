@@ -103,7 +103,8 @@ export default {
             this.$router.push({
               path:'/hotel',
               query:{
-                city:result.data.data[0].id
+                city:result.data.data[0].id,
+                name:this.inputContent
               }
             })
           }).catch(err=>{
