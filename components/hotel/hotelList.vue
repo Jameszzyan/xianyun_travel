@@ -3,16 +3,16 @@
     <!-- 酒店筛选部分 -->
     <el-row class="hotelNav" type="flex" justify="space-between" align="middle">
       <!-- 左边价格部分 -->
-      <el-col :span="8" type="flex" justify="space-between" align="middle" class="hotelNavLeft">
+      <el-col :span="5" type="flex" justify="space-between" align="middle" class="hotelNavLeft">
         <el-col :span="12">价格</el-col>
         <el-col :span="12">0-4000</el-col>
       </el-col>
       <!-- 右边筛选部分 -->
-      <el-col :span="16" class="hotelNavRight">
+      <el-col :span="19" class="hotelNavRight">
         <el-row>
-          <el-col :span="6" class="hotelLevel">
+          <el-col :span="5" class="hotelLevel">
             <span style="display:block">住宿等级</span>
-            <el-select v-model="level" placeholder="不限" multiple @change="handle">
+            <el-select v-model="level" placeholder="不限" multiple @change="handle" collapse-tags>
               <el-option
                 v-for="item in options.levels"
                 :key="item.id"
@@ -21,9 +21,9 @@
               ></el-option>
             </el-select>
           </el-col>
-          <el-col :span="6" class="hotelLevel">
+          <el-col :span="6.33" class="hotelother" style="margin-right:15px">
             <span style="display:block">住宿类型</span>
-            <el-select v-model="types" placeholder="不限" multiple>
+            <el-select v-model="types" placeholder="不限" multiple collapse-tags>
               <el-option
                 v-for="item in options.types"
                 :key="item.id"
@@ -32,9 +32,9 @@
               ></el-option>
             </el-select>
           </el-col>
-          <el-col :span="6" class="hotelLevel">
+          <el-col :span="6.33" class="hotelother" style="margin-right:15px">
             <span style="display:block">酒店设施</span>
-            <el-select v-model="assets" placeholder="不限" multiple>
+            <el-select v-model="assets" placeholder="不限" multiple collapse-tags>
               <el-option
                 v-for="item in options.assets"
                 :key="item.id"
@@ -43,9 +43,9 @@
               ></el-option>
             </el-select>
           </el-col>
-          <el-col :span="6" class="hotelLevel">
+          <el-col :span="6.33" class="hotelother">
             <span style="display:block">酒店品牌</span>
-            <el-select v-model="brands" placeholder="不限" multiple>
+            <el-select v-model="brands" placeholder="不限" multiple collapse-tags>
               <el-option
                 style="height:40px;"
                 v-for="item in options.brands"
@@ -157,11 +157,11 @@ export default {
       var dealArr = this.hotelList;
 
       // 处理施设筛选，当选中任意一个或多个选项执行
-      if (this.assets.length > 0) {
+      if (this.assets.length > 0 && dealArr.length > 0) {
         // 创建空数组存放筛选后的数据
-        dealArr = [];
+        var arr1 = [];
         // 遍历总数据获取每一间酒店的信息，里面有施设(数组)，品牌(数字)，星级(对象)，类型(对象)属性
-        this.hotelList.forEach((item, index) => {
+        dealArr.forEach((item, index) => {
           // 创建新数组用来接收当前遍历的酒店设施有哪些
           var arr = [];
           // 定义开关判断多个选项时，当前遍历的酒店是否同时符合多个选项，num为0时则判断为符合
@@ -180,54 +180,54 @@ export default {
           });
           // 只有选项同时符合当前遍历酒店设施功能时才会放进返回的数组
           if (num) {
-            dealArr.push(item);
+            arr1.push(item);
           }
         });
+        dealArr = arr1;
       }
 
       // 处理品牌筛选，当选中任意一个或多个选项执行
-      if (this.brands.length > 0) {
-        dealArr = [];
-        this.hotelList.forEach((item, index) => {
+      if (this.brands.length > 0 && dealArr.length > 0) {
+        var arr1 = [];
+        dealArr.forEach((item, index) => {
           // 避免品牌为null时报错
           if (item.hotelbrand) {
             this.brands.forEach((item1, index1) => {
               if (item.hotelbrand.name.indexOf(item1) > -1) {
-                if (dealArr.indexOf(item) === -1) {
-                  dealArr.push(item);
-                }
+                arr1.push(item);
               }
             });
           }
         });
+        dealArr = arr1;
       }
 
       // 处理星级筛选，当选中任意一个或多个选项执行
-      if (this.level.length > 0) {
-        dealArr = [];
-        this.hotelList.forEach((item, index) => {
+      if (this.level.length > 0 && dealArr.length > 0) {
+        var arr1 = [];
+        dealArr.forEach((item, index) => {
           this.level.forEach((item1, index1) => {
             if (Math.floor(item.stars) === item1) {
-              dealArr.push(item);
+              arr1.push(item);
             }
           });
         });
+        dealArr = arr1;
       }
 
       // 处理类型筛选，当选中任意一个或多个选项执行
-      if (this.types.length > 0) {
-        dealArr = [];
-        this.hotelList.forEach((item, index) => {
+      if (this.types.length > 0 && dealArr.length > 0) {
+        var arr1 = [];
+        dealArr.forEach((item, index) => {
           this.types.forEach((item1, index1) => {
             if (item.hoteltype.name) {
               if (item.hoteltype.name.indexOf(item1) > -1) {
-                if (dealArr.indexOf(item) === -1) {
-                  dealArr.push(item);
-                }
+                arr1.push(item);
               }
             }
           });
         });
+        dealArr = arr1;
       }
       return dealArr;
     }
@@ -244,18 +244,18 @@ export default {
       });
       const { data } = res.data;
       this.options = data;
-    }
+    },
 
     // 点击分页时调用接口
-    // async handlePageNum(v) {
-    //   this.$router.push({
-    //     path:'/hotel',
-    //     query:{
-    //       _start: (v - 1) * 5,
-    //       city: 199 //this.$route.query.id
-    //     }
-    //   })
-    // }
+    async handlePageNum(v) {
+      this.$router.push({
+        path: "/hotel",
+        query: {
+          _start: (v - 1) * 5,
+          city: 199 //this.$route.query.id
+        }
+      });
+    }
   },
   mounted() {
     // 用定时器获取父组件传值，异步
@@ -276,12 +276,13 @@ export default {
   font-size: 14px;
   .hotelNav {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 10px 5px 10px 5px;
     .hotelNavRight {
       //   border: 1px solid red;
       padding: 15px 0;
-      .hotelLevel {
-        padding: 5px 0 5px 20px;
+      .hotelLevel,
+      .hotelother {
+        padding: 5px 0 5px 7px;
         border-left: 1px solid #ddd;
         span {
           margin-bottom: 5px;
@@ -351,8 +352,14 @@ export default {
   }
 }
 /deep/ .el-input {
-  width: 130px;
+  width: 188px;
 }
+.hotelLevel {
+  /deep/ .el-input {
+    width: 130px;
+  }
+}
+
 /deep/ .el-input__inner {
   height: 30px;
 }
