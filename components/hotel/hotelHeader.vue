@@ -12,12 +12,14 @@
     <!-- 搜索城市位置（可切换至当前城市） -->
     <div class="citySearch">
       <span>搜索城市：</span>
-      <el-input
+      <el-autocomplete
         v-model="citySearch"
+        :fetch-suggestions="querySearchAsync"
         placeholder="请输入城市名称"
         class="searchInput"
+        @select="handleSelect"
         @keyup.enter.native="changeCity(citySearch)"
-      ></el-input>
+      ></el-autocomplete>
       <!-- 搜索按钮 -->
       <el-button type="primary" style="height:35px" @click.native="changeCity(citySearch)">搜索</el-button>
       <!-- 当前城市位置 -->
@@ -121,32 +123,6 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-
-    // 监听入住时间及入住人数
-    stayTime(val) {
-      let enter = new Date(val[0]);
-      let leave = new Date(val[1]);
-      let enterTime =
-        enter.getFullYear() +
-        "-" +
-        this.improveDate(enter.getMonth() + 1) +
-        "-" +
-        this.improveDate(enter.getDate());
-      let leaveTime =
-        leave.getFullYear() +
-        "-" +
-        this.improveDate(leave.getMonth() + 1) +
-        "-" +
-        this.improveDate(leave.getDate());
-      var obj = {
-        enterTime,
-        leaveTime,
-      };
-      this.$emit("exchange", obj);
-    },
-    bookerAmount(val) {
-      this.$emit("exchange", +val);
     }
   },
 
@@ -159,7 +135,13 @@ export default {
           type: "warning"
         });
       } else {
-        // 根据搜索城市查找该城市id并进行跳转
+        this.searchCity(city)
+      }
+    },
+
+    // 跳转城市
+    searchCity(city){
+       // 根据搜索城市查找该城市id并进行跳转
         this.$axios({
           url: "/cities",
           method: "get",
@@ -179,7 +161,6 @@ export default {
           .catch(err => {
             console.log(err);
           });
-      }
     },
 
     // 切换至当前定位的城市
@@ -209,7 +190,7 @@ export default {
           this.improveDate(enter.getMonth() + 1) +
           "-" +
           this.improveDate(enter.getDate());
-        let leaveTime =
+        let leftTime =
           leave.getFullYear() +
           "-" +
           this.improveDate(leave.getMonth() + 1) +
@@ -217,10 +198,10 @@ export default {
           this.improveDate(leave.getDate());
         var obj = {
           enterTime,
-          leaveTime,
+          leftTime,
           person: +this.bookerAmount
         };
-        this.$emit("changeData", obj);
+        this.$emit("sendLiveData", obj);
       }
     },
 
@@ -231,7 +212,37 @@ export default {
       } else {
         return val;
       }
+    },
+
+    // 输入值后进行请求数据展示
+    querySearchAsync(queryString, cb){
+       if(queryString){
+          this.$axios({
+          url:'cities',
+          method:'get',
+          params:{
+            name:queryString
+          }
+        }).then(result=>{
+          let arr = result.data.data
+          arr.forEach(item=>{
+            for(var key in item){
+              if(key === "name"){
+                item.value = item.name.substring(0,item.name.length-1)
+              }
+            }
+          })
+          cb(arr)
+        }).catch(err=>{
+          console.log(err)
+        })
+       }
+    },
+
+    handleSelect(item){
+        this.searchCity(item.value)
     }
+
   },
 
   mounted() {

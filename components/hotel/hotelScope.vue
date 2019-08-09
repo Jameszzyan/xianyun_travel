@@ -158,7 +158,7 @@ export default {
       this.currentArea = index;
       this.$nextTick(() => {
         let selected = document.querySelector(".area .areaContent .active");
-        this.$emit('changeData','区域:'+selected.innerText)
+        this.$emit('sendArea',selected.innerText)
       });
     }
   },

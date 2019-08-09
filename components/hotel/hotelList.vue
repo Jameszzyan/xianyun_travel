@@ -5,10 +5,10 @@
       <!-- 左边价格部分 -->
       <el-col :span="5" type="flex" justify="space-between" align="middle" class="hotelNavLeft">
         <el-col :span="12">价格</el-col>
-        <el-col :span="12">0-4000</el-col>
+        <el-col :span="12">0-{{price}}</el-col>
         <!-- 进度条 -->
         <div class="progress">
-          <el-slider v-model="percentage"></el-slider>
+          <el-slider v-model="percentage" :show-tooltip="false"></el-slider>
         </div>
       </el-col>
       <!-- 右边筛选部分 -->
@@ -126,7 +126,7 @@
     </el-row>
     <div v-if="selected.length===0" class="noneList">sorry!暂无任何数据</div>
     <!-- 分页 -->
-    <el-pagination @current-change="handlePageNum" layout="prev, pager, next" :total="200" :current-page.sync="currentPage"></el-pagination>
+    <el-pagination layout="prev, pager, next" :total="200" :current-page.sync="currentPage"></el-pagination>
   </div>
 </template>
 
@@ -155,7 +155,8 @@ export default {
       types: [], //绑定类型筛选数组
       total: [], //列表总条数
       hotelList: [], // 缓存的酒店列表数组
-      percentage: 100,
+      percentage: 100, // 价格条百分比
+      price:4000,
       currentPage:1
     };
   },
@@ -238,6 +239,11 @@ export default {
         });
         dealArr = arr1;
       }
+
+      // 筛选价格区间的数据
+      dealArr = dealArr.filter((item)=>{
+        return item.price < this.price
+      })
       return dealArr;
     }
   },
@@ -250,30 +256,10 @@ export default {
       const { data } = res.data;
       this.options = data;
     },
-
-    // 点击分页时传值到父组件进行数据更新
-    handlePageNum(page) {
-      if(this.liveData.enterTime && this.liveData.leaveTime && person){
-        var obj = {
-          _start:(page-1) * 5,
-          ...this.liveData
-        }
-        this.$emit("changeData",obj)
-        // 分页时将页码传给各个兄弟组件
-        this.$emit("sendPage",page)
-      }
-      else{
-        var obj = {
-           _start:(page-1) * 5
-        }
-        this.$emit("changeData",obj)
-        // 分页时将页码传给各个兄弟组件
-        this.$emit("sendPage",page)
-      }
-    },
   },
 
   watch:{
+    // 监测父组件传过来的数据变化
     webData:{
       handler(newVal,oldVal){
         this.hotelList = JSON.parse(JSON.stringify(this.webData.data))
@@ -282,6 +268,17 @@ export default {
       },
       immediate:true,
       deep:true
+    },
+
+    // 当页码变化时传递给父组件更新数据
+    currentPage(val){
+       // 分页时将页码传给父组件
+        this.$emit("sendPage",(val-1) * 5)
+    },
+
+    // 当进度条变化筛选数据
+    percentage(val){
+      this.price = parseInt(val / 100 * 4000)
     },
 
    '$route'(){

@@ -78,6 +78,9 @@ export default {
             });
           });
           hotelMap.setFitView();
+
+          // 添加信息弹框
+          
         } else {
           hotelMap.setCity(this.$route.query.name);
         }

@@ -2,13 +2,13 @@
   <div class="hotel">
     <!-- 头部选择预订信息 -->
     <div class="header">
-      <hotel-header :data="webData" @changeData="init" @exchange="exchange"></hotel-header>
+      <hotel-header :data="webData" @sendLiveData="sendLiveData"></hotel-header>
     </div>
     <!-- 酒店范围和酒店地图 -->
     <el-row :gutter="20" class="areaAndMap">
       <!-- 酒店范围 -->
       <el-col :span="12">
-        <hotel-scope :data="webData" @changeData="init"></hotel-scope>
+        <hotel-scope :data="webData" @sendArea="sendArea"></hotel-scope>
       </el-col>
       <!-- 酒店地图 -->
       <el-col :span="12">
@@ -16,7 +16,7 @@
       </el-col>
     </el-row>
     <!-- 酒店列表 -->
-    <hotel-list :webData="webData" :liveData="liveData" @changeData="init" @sendPage="sendPage"></hotel-list>
+    <hotel-list :webData="webData" @sendPage="sendPage"></hotel-list>
   </div>
 </template>
 
@@ -30,17 +30,15 @@ export default {
         nextstart: 0,
         total: 0
       },
-    // 传递酒店头部数据到酒店列表子组件
-      liveData:{
-          enterTime:'',
-          leaveTime:'',
-          person:0
+      // 传递各组件数据到父组件
+      liveData: {
+        enterTime: "",
+        leftTime: "",
+        person: 0,
+        _start: 0
       },
-    // 传递页码到各个子组件
-      page:1,
-
-    // 传递区域到各个子组件
-      area:'全部'
+      // 传递区域到各个子组件
+      area: "全部",
     };
   },
 
@@ -54,55 +52,52 @@ export default {
 
   methods: {
     // 获取页面整体渲染数据
-    async init(val) {
+    async init() {
       let { city } = this.$route.query;
-      let result = await this.$axios({
-        url: `hotels?&city=${city}`,
-        method: "get"
-      });
-      this.webData = result.data;
-      // console.log(this.webData)
-      if (val) {
-        if (typeof val === "string") {
-          if (val.indexOf("区域") > -1) {
-            var arr = val.split(":");
-            if (arr[1] === "全部") {
-              arr[1] = "";
-            }
-            var selectedList = this.webData.data.filter(item => {
-              return item.area.indexOf(arr[1]) > -1;
-            });
-            this.webData.data = selectedList;
-            // console.log(this.webData);
-          }
-        } else if (typeof val === "object") {
-          this.$axios({
-            url: "/hotels",
-            method: "get",
-            params: {
-              city: this.$route.query.city,
-              ...val
-            }
-          })
-            .then(result => {
-              this.webData = result.data
-            })
-            .catch(err => {
-              console.log(err);
-            });
+      let obj = this.liveData;
+      let finalArr = {
+        city
+      };
+      for (var key in obj) {
+        if (obj[key] && key !="person") {
+          finalArr[key] = obj[key];
         }
       }
+      let result = await this.$axios({
+        url: "/hotels",
+        method: "get",
+        params: finalArr
+      });
+      let data = result.data
+      if(this.area !== "全部"){
+          this.webData.data = data.data.filter((item)=>{
+              return item.area.indexOf(this.area) > -1
+          })
+      }
+      else{
+          this.webData = data
+      }
+      
     },
 
-    // 传递酒店头部数据到酒店列表子组件
-    exchange(val){
-        if(typeof val === "object"){
-            this.liveData.enterTime = val.enterTime
-            this.liveData.leaveTime = val.leaveTime
-        }
-        if(typeof val === "number"){
-            this.liveData.person = val
-        }
+    // 传递酒店头部数据
+    sendLiveData(val) {
+      this.liveData.enterTime = val.enterTime;
+      this.liveData.leftTime = val.leftTime;
+      this.liveData.person = val.person;
+      this.init();
+    },
+
+    // 传递选中区域
+    sendArea(val) {
+      this.area = val;
+      this.init();
+    },
+
+    // 传递分页页码
+    sendPage(val) {
+      this.liveData._start = val;
+      this.init();
     }
   },
 
