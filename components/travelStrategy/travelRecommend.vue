@@ -4,15 +4,13 @@
     <!-- 上部搜索框部分 -->
     <div class="search-wrapper">
       <div style="margin-top: 15px;">
-        <el-input placeholder="请输入你想去的地方,比如'广州'" v-model="input" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入你想去的地方,比如'广州'" v-model="cityName" class="input-with-select" @keydown.enter.native="searchCity">
+          <el-button slot="append" icon="el-icon-search" @click="searchCity"></el-button>
         </el-input>
       </div>
       <div class="search-recommend">
         推荐：
-        <nuxt-link to>广州</nuxt-link>
-        <nuxt-link to>上海</nuxt-link>
-        <nuxt-link to>北京</nuxt-link>
+        <span v-for="(item4,index4) in commendCity" :key='index4' class="commendCity" @click="searchCitybyRecom(item4)">{{item4}} &ensp;</span>       
       </div>
     </div>
 
@@ -21,14 +19,14 @@
       <!-- 推荐攻略的头部 -->
       <div class="post-title">
         <div class="title">推荐攻略</div>
-        <el-button type="primary" icon="el-icon-edit" class="icon-edit">写游记</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="icon-edit" @click="WriteSomething()">写游记</el-button>
       </div>
 
       <!-- 推荐攻略的正文部分 -->
       <div class="post-body">
         <div v-for="(item,index) in recommendList" :key="index" @click="handleToLink(item.id)">
           <!-- 1 显示三张图片文章的部分 -->
-          <div class="post-three" v-if="item.images.length>=3">
+          <div class="post-three" v-if="item.images.length >=3">
             <div class="post-three-content">
               <nuxt-link to>
                 <h3>{{item.title}}</h3>
@@ -63,9 +61,9 @@
                 <div class="grid-content">
                   <!-- <nuxt-link to class="post-pic">
                     <img src="http://157.122.54.189:9093/images/pic_sea.jpeg" />
-                  </nuxt-link> -->
-                  <nuxt-link to="" class="post-pic">
-                     <img :src="item.images" />
+                  </nuxt-link>-->
+                  <nuxt-link to class="post-pic">
+                    <img :src="item.images" />
                   </nuxt-link>
                 </div>
               </el-col>
@@ -118,49 +116,67 @@
 
 <script>
 export default {
-  
   data() {
     return {
+      commendCity:['广州','上海','北京'],
+      cityName:"",
       // total:10,
-      cityList:[],
+      cityList: [],
       input: "",
       // 分页
-      pageObj:{
-      pagesize:3,
-      currentPage:1,
-      }     
+      pageObj: {
+        pagesize: 3,
+        currentPage: 1
+      }
     };
   },
   methods: {
-    handleToLink(id){
+    // 根据推荐城市搜索
+    searchCitybyRecom(a){
+      this.$emit("searchCity",a) 
+    },
+    // 搜索城市名
+    searchCity(){
+      this.$emit("searchCity",this.cityName)        
+    },
+    // 写游记跳转
+    WriteSomething(){
       this.$router.push({
-        path:'/travelStrategy/details?id='+id
-      })
+        path: "/travelStrategy/addPost"
+      });
+    },
+    // 跳转文章
+    handleToLink(id) {
+      this.$router.push({
+        path: "/travelStrategy/details?id=" + id
+      });
     },
     // 分页
     handleSizeChange(val) {
-      this.pageObj.pagesize=val
-      this.$emit("setPage",this.pageObj)
+      this.pageObj.pagesize = val;
+      this.$emit("setPage", this.pageObj);
     },
     handleCurrentChange(val) {
-      this.pageObj.currentPage=val
-      this.$emit("setPage",this.pageObj)
-    },
-   
+      this.pageObj.currentPage = val;
+      this.$emit("setPage", this.pageObj);
+    }
   },
   // props:["recommendList","total"]
   props: {
-    recommendList:{
-       type:Array,
-       default:[]
-    }, 
-    total:{
-      type:Number,
-      default:3
-    }   
+    recommendList: {
+      type: Array,
+      default: []
+    },
+    total: {
+      type: Number,
+      default: 3
+    },
+    cityName:{
+      type:String,
+      default:""
+    }
   }
-  
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -245,7 +261,7 @@ export default {
 }
 // 推荐攻略文章列表样式(显示1张图片的文章)
 .post {
-  height:180px;
+  height: 180px;
   width: 100%;
   padding: 5px 0;
   border-bottom: 1px #ccc solid;
@@ -265,7 +281,7 @@ export default {
       p {
         height: 90px;
         overflow: hidden;
-         margin-bottom: 10px;
+        margin-bottom: 10px;
       }
     }
     .post-pic {
@@ -286,7 +302,7 @@ export default {
     }
   }
   .post-like {
-    color: orange;   
+    color: orange;
     right: 5px;
     position: absolute;
     bottom: 0px;
@@ -318,5 +334,9 @@ export default {
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
+}
+
+.commendCity{
+  cursor: pointer;
 }
 </style>

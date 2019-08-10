@@ -16,7 +16,7 @@
               <nuxt-link to="/travelStrategy">旅游攻略</nuxt-link>
             </el-col>
             <el-col :span="3">
-              <nuxt-link to="/hotel">酒店</nuxt-link>
+              <nuxt-link to="/hotel?city=199&name=深圳">酒店</nuxt-link>
             </el-col>
             <el-col :span="3">
               <nuxt-link to="/planeTicket">国内机票</nuxt-link>

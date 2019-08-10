@@ -13,9 +13,9 @@
         >
           <el-submenu :index="''+index" v-for="(item,index) in cityList" :key="index">
             <template slot="title">{{item.type}}</template>
-            <el-menu-item index="item2.index" v-for="(item2,index2) in item.children" :key="index2" @click.native="getCityName(item2)">
+            <el-menu-item index="item2.index" v-for="(item2,index2) in item.children" :key="index2" @click.native="getCityName(item2)">              
               <span class="post-city">
-                <!-- <span v-for="(item3,index2) in indexNum" :key="index2">{{item3}}</span> -->
+                <span>{{index2+1}}</span>
                 {{item2.city}}
               </span>
               <span>{{item2.desc}}</span>
@@ -43,7 +43,7 @@
 export default {
   data() {
     return {
-      indexNum:[1,2,3,4,5],
+    
       // 左侧导航栏
       activeIndex: '1',
       activeIndex2: '1',
@@ -53,7 +53,7 @@ export default {
     // 点击导航中的城市
     getCityName(item){
       console.log(item)
-      this.$emit("setCityName",item.city)
+      this.$emit("setCityName",item.city) 
     },
     // 左侧导航栏
     handleSelect(key, keyPath) {
