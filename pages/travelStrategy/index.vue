@@ -57,9 +57,9 @@ export default {
     },
     // 获取页数后更新
     newPage(data) {
-      // console.log(data,newPage);
-      (this.start = data.currentPage),
-        (this.limit = data.pagesize),
+      // console.log(data,newPage);      
+      this.start = data.currentPage,
+      this.limit = data.pagesize,
         // console.log(data)
         this.getRecommendList();
     },
@@ -76,7 +76,7 @@ export default {
     getRecommendList(v) {
       if (v) {
         var obj = {
-          _start: this.start,
+          _start: this.start-1,
           _limit: this.limit,
           city: v
         };

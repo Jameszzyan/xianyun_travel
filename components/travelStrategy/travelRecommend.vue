@@ -4,13 +4,23 @@
     <!-- 上部搜索框部分 -->
     <div class="search-wrapper">
       <div style="margin-top: 15px;">
-        <el-input placeholder="请输入你想去的地方,比如'广州'" v-model="cityName" class="input-with-select" @keydown.enter.native="searchCity">
+        <el-input
+          placeholder="请输入你想去的地方,比如'广州'"
+          v-model="cityName"
+          class="input-with-select"
+          @keydown.enter.native="searchCity"
+        >
           <el-button slot="append" icon="el-icon-search" @click="searchCity"></el-button>
         </el-input>
       </div>
       <div class="search-recommend">
         推荐：
-        <span v-for="(item4,index4) in commendCity" :key='index4' class="commendCity" @click="searchCitybyRecom(item4)">{{item4}} &ensp;</span>       
+        <span
+          v-for="(item4,index4) in commendCity"
+          :key="index4"
+          class="commendCity"
+          @click="searchCitybyRecom(item4)"
+        >{{item4}} &ensp;</span>
       </div>
     </div>
 
@@ -19,7 +29,12 @@
       <!-- 推荐攻略的头部 -->
       <div class="post-title">
         <div class="title">推荐攻略</div>
-        <el-button type="primary" icon="el-icon-edit" class="icon-edit" @click="WriteSomething()">写游记</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-edit"
+          class="icon-edit"
+          @click="WriteSomething()"
+        >写游记</el-button>
       </div>
 
       <!-- 推荐攻略的正文部分 -->
@@ -59,11 +74,9 @@
             <el-row type="flex">
               <el-col :span="8">
                 <div class="grid-content">
-                  <!-- <nuxt-link to class="post-pic">
-                    <img src="http://157.122.54.189:9093/images/pic_sea.jpeg" />
-                  </nuxt-link>-->
                   <nuxt-link to class="post-pic">
-                    <img :src="item.images" />
+                    <img :src="item.images" v-if="item.images.length!==0" />
+                    <img src="http://157.122.54.189:9093/images/pic_sea.jpeg" v-else />
                   </nuxt-link>
                 </div>
               </el-col>
@@ -118,8 +131,8 @@
 export default {
   data() {
     return {
-      commendCity:['广州','上海','北京'],
-      cityName:"",
+      commendCity: ["广州", "上海", "北京"],
+      cityName: "",
       // total:10,
       cityList: [],
       input: "",
@@ -132,15 +145,15 @@ export default {
   },
   methods: {
     // 根据推荐城市搜索
-    searchCitybyRecom(a){
-      this.$emit("searchCity",a) 
+    searchCitybyRecom(a) {
+      this.$emit("searchCity", a);
     },
     // 搜索城市名
-    searchCity(){
-      this.$emit("searchCity",this.cityName)        
+    searchCity() {
+      this.$emit("searchCity", this.cityName);
     },
     // 写游记跳转
-    WriteSomething(){
+    WriteSomething() {
       this.$router.push({
         path: "/travelStrategy/addPost"
       });
@@ -171,9 +184,9 @@ export default {
       type: Number,
       default: 3
     },
-    cityName:{
-      type:String,
-      default:""
+    cityName: {
+      type: String,
+      default: ""
     }
   }
 };
@@ -209,7 +222,7 @@ export default {
 }
 // 推荐攻略文章列表样式(显示3张图片的文章)
 .post-three {
-  height: 330px;
+  height: 350px;
   width: 100%;
   padding: 5px 0;
   overflow: hidden;
@@ -224,21 +237,26 @@ export default {
       margin-bottom: 10px;
     }
     p {
-      height: 90px;
+      height: 95px;
       overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
     }
   }
   .post-three-pic {
     width: 100%;
     height: 170px;
     overflow: hidden;
+    position: absolute;
+    bottom: 30px;
     // position: relative;
     img {
       height: 170px;
       width: 32%;
       margin-right: 10px;
       text-align: center;
-
       // position:absolute;
       // bottom:10px;
     }
@@ -261,9 +279,9 @@ export default {
 }
 // 推荐攻略文章列表样式(显示1张图片的文章)
 .post {
-  height: 180px;
+  height: 190px;
   width: 100%;
-  padding: 5px 0;
+  padding: 10px 0;
   border-bottom: 1px #ccc solid;
   overflow: hidden;
   position: relative;
@@ -271,6 +289,7 @@ export default {
   .grid-content {
     word-wrap: break-word;
     .post-content {
+      height: 150px;
       margin: 10px;
       h3 {
         width: 100%;
@@ -279,9 +298,13 @@ export default {
         margin-bottom: 10px;
       }
       p {
-        height: 90px;
-        overflow: hidden;
+        height: 95px;
         margin-bottom: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
       }
     }
     .post-pic {
@@ -336,7 +359,7 @@ export default {
   background-color: #f9fafc;
 }
 
-.commendCity{
+.commendCity {
   cursor: pointer;
 }
 </style>

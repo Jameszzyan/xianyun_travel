@@ -12,16 +12,16 @@
           :collapse="true"
         >
           <el-submenu :index="''+index" v-for="(item,index) in cityList" :key="index">
-            <template slot="title">{{item.type}}</template>
+            <template slot="title">{{item.type}}<i class="el-icon-arrow-right"></i></template> 
             <el-menu-item index="item2.index" v-for="(item2,index2) in item.children" :key="index2" @click.native="getCityName(item2)">              
               <span class="post-city">
                 <span>{{index2+1}}</span>
                 {{item2.city}}
               </span>
               <span>{{item2.desc}}</span>
-            </el-menu-item>           
+            </el-menu-item>                     
           </el-submenu>
-
+        
         </el-menu>
         <div class="line"></div>
       </div>
@@ -70,6 +70,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 // 左侧导航样式
 .contianer {
   width:1000px;
@@ -84,6 +85,11 @@ export default {
 }
 .el-menu{
   border-right:0;
+  .el-icon-arrow-right{
+    float: right;
+    padding-top: 19px;
+    // vertical-align: middle;
+  }
 }
 .el-menu--collapse .el-submenu{
       width: 200px;
