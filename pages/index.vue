@@ -90,7 +90,7 @@ export default {
       if (this.inputContent) {
         var index = this.current
         var name = this.searchList[index].name;
-        // 酒店栏搜索项及跳转
+        酒店栏搜索项及跳转
         if (name === "酒店") {
           this.$axios({
             url:'/cities',

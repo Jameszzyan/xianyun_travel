@@ -29,7 +29,10 @@ export default {
   */
   css: [
     'element-ui/lib/theme-chalk/index.css',
-    'assets/main.css' // 新增自定义的页面过渡样式（文件来自3.4.1）
+    'assets/main.css', // 新增自定义的页面过渡样式（文件来自3.4.1）
+    'quill/dist/quill.snow.css',
+    'quill/dist/quill.bubble.css',
+    'quill/dist/quill.core.css'
   ],
 
   /*
@@ -38,7 +41,11 @@ export default {
   plugins: [
     '@/plugins/element-ui',
     '@/plugins/axios',
-    { src: '@/plugins/localStorage', ssr: false }
+    { src: '@/plugins/localStorage', ssr: false },
+    {
+      src: '~/plugins/vue-quill-editor',
+      ssr: false
+    }
   ],
 
   /*
@@ -62,13 +69,7 @@ export default {
   ** Build configuration
   */
   build: {
-    transpile: [/^element-ui/],
-
-    /*
-    ** You can extend webpack config here
-    */
-    extend(config, ctx) {
-    }
+    transpile: [/^element-ui/]
   },
   router:{
     middleware:'routeMiddleware'

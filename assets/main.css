@@ -13,3 +13,12 @@
     background:#409eff;
     height: 1px;
 }
+/* 清除浮动 */
+.clearfix::before,
+.clearfix::after {
+  content: "";     /* 伪元素必须配合content一起使用才有效果*/
+  display: table;   /*将显示方式转换成table 为了让浏览器有更好的兼容*/
+}
+.clearfix::after {
+  clear: both;  /*  清除浮动的代码*/
+}
