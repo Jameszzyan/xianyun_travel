@@ -12,11 +12,11 @@
       </el-col>
       <!-- 酒店地图 -->
       <el-col :span="12">
-        <hotel-map :data="webData"></hotel-map>
+        <hotel-map :data="webData" :filterData="filterData"></hotel-map>
       </el-col>
     </el-row>
     <!-- 酒店列表 -->
-    <hotel-list :webData="webData" @sendPage="sendPage"></hotel-list>
+    <hotel-list :webData="webData" @sendPage="sendPage" @sendFilterData="sendFilterData"></hotel-list>
   </div>
 </template>
 
@@ -39,6 +39,8 @@ export default {
       },
       // 传递区域到各个子组件
       area: "全部",
+      // 传递多选选择的数据到地图组件
+      filterData:{}
     };
   },
 
@@ -98,12 +100,20 @@ export default {
     sendPage(val) {
       this.liveData._start = val;
       this.init();
+    },
+
+    // 传递多选选项的筛选数据
+    sendFilterData(val){
+      this.filterData = {
+        data:val
+      }
     }
   },
 
   watch: {
     // 路由更新数据重新获取渲染
     $route() {
+      this.area = '全部'
       this.init();
     }
   },

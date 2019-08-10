@@ -16,7 +16,7 @@
           <TravelRecommend
             :recommendList="recommendList"
             :total="total"
-            :cityName="cityName"
+            :cityname="cityName"
             @getRecommendList="getRecommendList"
             @setPage="newPage"
             @searchCity="getRecommendList"
@@ -48,6 +48,7 @@ export default {
       total: 10
     };
   },
+
   methods: {
     // 获取城市名称(从子组件的导航处点击获取)
     newCityName(data) {
@@ -116,14 +117,18 @@ export default {
     }
   },
 
+
   mounted() {
     // this.newCityName();
     this.getCityList();
+    // 获取路由拼接参数的值
+    let city = this.$route.query.name
     this.$axios({
       url: "/posts",
       params: {
         _start: 0,
-        _limit: 3
+        _limit: 3,
+        city
       }
     }).then(res => {
       console.log(res, 111);

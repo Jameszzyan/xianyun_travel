@@ -25,11 +25,14 @@
 
         <!-- 输入框 -->
         <el-row type="flex" align="middle" class="search-input">
-          <input
+          <el-autocomplete
+            v-model="inputContent"
+            :fetch-suggestions="querySearchAsync"
             :placeholder="searchList[current].placeholder"
-            v-model="inputContent" @keyup.enter="getCity"
-          />
-          <i class="el-icon-search" @click="getCity"></i>
+            @select="handleSelect"
+            @keyup.enter.native="clickSearch"
+          ></el-autocomplete>
+          <i class="el-icon-search" @click="clickSearch"></i>
         </el-row>
       </div>
     </div>
@@ -75,6 +78,7 @@ export default {
     };
   },
   methods: {
+    // tab栏切换
     handleChange(index) {
       if (index < 2) {
         this.current = index;
@@ -84,43 +88,94 @@ export default {
         });
       }
     },
+
     // 当用户输入内容后进行搜索
-    getCity() {
+    clickSearch() {
       // 内容不为空时进行查找
       if (this.inputContent) {
-        var index = this.current
-        var name = this.searchList[index].name;
-        酒店栏搜索项及跳转
-        if (name === "酒店") {
-          this.$axios({
-            url:'/cities',
-            method:'get',
-            params:{
-              name:this.inputContent
-            }
-          }).then(async result=>{
-            console.log(result)
-            this.$router.push({
-              path:'/hotel',
-              query:{
-                city:result.data.data[0].id,
-                name:this.inputContent
-              }
-            })
-          }).catch(err=>{
-            console.log(err)
-          })
-        }
+        this.jumpTo()
       }
       // 提示输入搜索内容
-      else{
-         this.$alert('请输入搜索内容', '提示', {
-          confirmButtonText: '确定',
-          type:'warning'
-         })
+      else {
+        this.$alert("请输入搜索内容", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
       }
-    }
+    },
+
+    // 根据输入值查找城市
+    querySearchAsync(queryString, cb) {
+      if (queryString) {
+        this.$axios({
+          url: "cities",
+          method: "get",
+          params: {
+            name: queryString
+          }
+        })
+          .then(result => {
+            let arr = result.data.data;
+            arr.forEach(item => {
+              for (var key in item) {
+                if (key === "name") {
+                  item.value = item.name.substring(0, item.name.length - 1);
+                }
+              }
+            });
+            cb(arr);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    },
+
+    // 当选定内容后进行跳转
+    handleSelect() {
+      this.jumpTo();
+    },
+
+
+    // 城市和攻略部分跳转
+    jumpTo(){
+        var index = this.current;
+        var name = this.searchList[index].name;
+        // 攻略及酒店跳转
+        if (name === "酒店") {
+          this.$axios({
+            url: "/cities",
+            method: "get",
+            params: {
+              name: this.inputContent
+            }
+          })
+            .then(async result => {
+              this.$router.push({
+                path: "/hotel",
+                query: {
+                  city: result.data.data[0].id,
+                  name: this.inputContent
+                }
+              });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+        else if(name === "攻略"){
+          console.log("------")
+          this.$router.push({
+            path:'/travelStrategy',
+            query:{
+              name:this.inputContent
+            }
+          })
+        }
+    },
+
   },
+
   mounted() {
     // 请求轮播图所需图片的地址
     this.$axios({
@@ -211,13 +266,15 @@ export default {
       border-top: none;
       box-sizing: unset;
 
-      input {
+      /deep/ .el-input .el-input__inner {
         flex: 1;
         height: 20px;
         padding: 13px 15px;
         outline: none;
         border: 0;
         font-size: 16px;
+        width:510px;
+        height:46px;
       }
 
       .el-icon-search {
