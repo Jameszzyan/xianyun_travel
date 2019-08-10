@@ -7,13 +7,13 @@
         <el-col :span="20">
           <!-- 区域数据展示(折叠) -->
           <div class="areaContent">
-            <span class="areaName" :class="{active:currentArea === -1}" @click="currentArea=-1">全部</span>
+            <span class="areaName" :class="{active:currentArea === -1}" @click="changeArea(-1)">全部</span>
             <span
               class="areaName"
               v-for="(item,index) in area"
               :key="index"
               :class="{active:currentArea === index}"
-              @click="currentArea=index"
+              @click="changeArea(index)"
             >{{item}}</span>
           </div>
           <!-- 区域数据是否折叠 -->
@@ -46,7 +46,7 @@
         <el-col :span="4">均价：</el-col>
         <el-col :span="20">
           <span v-for="(first,index) in avgPrice" :key="index" class="degree">
-            <i class="iconfont icon-huangguan" v-for="second in first.amount" :key="second"></i>
+            <i class="iconfont iconhuangguan" v-for="second in first.amount" :key="second"></i>
             <span>￥{{first.value}}</span>
           </span>
         </el-col>
@@ -135,6 +135,8 @@ export default {
           arr.forEach(item => {
             this.area.push(item.name);
           });
+          // 每次更新都默认选择全部
+          this.currentArea = -1
           // 获取该区域dom元素引用
           let fold = document.querySelector(".areaContent");
           // 判断如果没有数据，缩小展示区域高度
@@ -149,6 +151,15 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+
+    // 根据选中区域发送给父组件进行数据更新
+    changeArea(index) {
+      this.currentArea = index;
+      this.$nextTick(() => {
+        let selected = document.querySelector(".area .areaContent .active");
+        this.$emit('sendArea',selected.innerText)
+      });
     }
   },
 
@@ -157,20 +168,7 @@ export default {
   },
 
   updated() {
-    // let fold = document.querySelector(".areaContent");
-    // // 判断如果没有数据，缩小展示区域高度
-    // if (this.area.length === 0) {
-    //   fold.style.height = "30px";
-    // } else {
-    //   fold.style.height = "50px";
-    // //   观测折叠展示高度
-    //   if (this.isFold === true) {
-    //     fold.style.overflow = "hidden";
-    //   } else {
-    //     fold.style.height = "100%";
-    //     fold.style.overflow = "visible";
-    //   }
-    // }
+    
   }
 };
 </script>
@@ -178,7 +176,7 @@ export default {
 <style lang="less" scoped>
 .hotelScope {
   font-size: 14px;
-  margin-top:30px;
+  margin-top: 30px;
   .area {
     padding-bottom: 5px;
     border-bottom: 1px solid #ddd;
@@ -212,11 +210,12 @@ export default {
 
   .averagePrice {
     margin-top: 20px;
-    margin-bottom:50px;
+    margin-bottom: 50px;
     .degree {
       margin-right: 20px;
       .iconfont {
-        background-color: orange;
+        // background-color: orange;
+        color:orange;
         margin-right: 2px;
       }
     }

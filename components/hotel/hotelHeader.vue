@@ -12,12 +12,14 @@
     <!-- 搜索城市位置（可切换至当前城市） -->
     <div class="citySearch">
       <span>搜索城市：</span>
-      <el-input
+      <el-autocomplete
         v-model="citySearch"
+        :fetch-suggestions="querySearchAsync"
         placeholder="请输入城市名称"
         class="searchInput"
+        @select="handleSelect"
         @keyup.enter.native="changeCity(citySearch)"
-      ></el-input>
+      ></el-autocomplete>
       <!-- 搜索按钮 -->
       <el-button type="primary" style="height:35px" @click.native="changeCity(citySearch)">搜索</el-button>
       <!-- 当前城市位置 -->
@@ -50,7 +52,7 @@
         class="inputAmount"
       ></el-input>
       <!-- 查找按钮 -->
-      <el-button type="primary">查找酒店</el-button>
+      <el-button type="primary" @click.native="dataFilter">查找酒店</el-button>
     </div>
   </div>
 </template>
@@ -113,8 +115,8 @@ export default {
     };
   },
 
-  // 要想操作props传过来的数据，使用watch进行深度监听
   watch: {
+    // 要想操作props传过来的数据，使用watch进行深度监听
     data: {
       handler(newVal, oldVal) {
         this.citySearch = this.$route.query.name;
@@ -133,7 +135,13 @@ export default {
           type: "warning"
         });
       } else {
-        // 根据搜索城市查找该城市id并进行跳转
+        this.searchCity(city)
+      }
+    },
+
+    // 跳转城市
+    searchCity(city){
+       // 根据搜索城市查找该城市id并进行跳转
         this.$axios({
           url: "/cities",
           method: "get",
@@ -153,14 +161,88 @@ export default {
           .catch(err => {
             console.log(err);
           });
-      }
     },
 
-    //   切换至当前定位的城市
+    // 切换至当前定位的城市
     changeLocalCity() {
       this.citySearch = this.myCity;
       this.changeCity(this.citySearch);
+    },
+
+    // 根据用户选择日期及人数发送到父组件进行筛选
+    dataFilter() {
+      if (!this.stayTime) {
+        this.$alert("请输入入住时间", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      } else if (!this.bookerAmount) {
+        this.$alert("请输入入住人数", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      } else {
+        let enter = new Date(this.stayTime[0]);
+        let leave = new Date(this.stayTime[1]);
+        let enterTime =
+          enter.getFullYear() +
+          "-" +
+          this.improveDate(enter.getMonth() + 1) +
+          "-" +
+          this.improveDate(enter.getDate());
+        let leftTime =
+          leave.getFullYear() +
+          "-" +
+          this.improveDate(leave.getMonth() + 1) +
+          "-" +
+          this.improveDate(leave.getDate());
+        var obj = {
+          enterTime,
+          leftTime,
+          person: +this.bookerAmount
+        };
+        this.$emit("sendLiveData", obj);
+      }
+    },
+
+    // 完善日期函数
+    improveDate(val) {
+      if (+val < 10) {
+        return "0" + val;
+      } else {
+        return val;
+      }
+    },
+
+    // 输入值后进行请求数据展示
+    querySearchAsync(queryString, cb){
+       if(queryString){
+          this.$axios({
+          url:'cities',
+          method:'get',
+          params:{
+            name:queryString
+          }
+        }).then(result=>{
+          let arr = result.data.data
+          arr.forEach(item=>{
+            for(var key in item){
+              if(key === "name"){
+                item.value = item.name.substring(0,item.name.length-1)
+              }
+            }
+          })
+          cb(arr)
+        }).catch(err=>{
+          console.log(err)
+        })
+       }
+    },
+
+    handleSelect(item){
+        this.searchCity(item.value)
     }
+
   },
 
   mounted() {
@@ -186,7 +268,9 @@ export default {
         });
       }
     });
-  }
+  },
+
+  updated() {}
 };
 </script>
 

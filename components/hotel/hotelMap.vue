@@ -30,8 +30,13 @@ export default {
         // 找出所有酒店的坐标并配置数字图标
         newVal.data.forEach((item, index) => {
           var arr = Object.values(item.location);
+          var markerContent =
+          `<div class="custom-content-marker">
+          <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png" class="point"><span class="text">${index+1}</span>
+          </div>`;
+          
           var obj = {
-            icon: `//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png`,
+            content: markerContent,
             position: arr
           };
           show.push(obj);
@@ -59,40 +64,55 @@ export default {
         zoom: 11, //级别
         center: [116.397428, 39.90923] //中心点坐标
       });
-      hotelMap.setCity(this.$route.query.name);
 
       //   设置每个覆盖物
       //   需设置判断条件防止异步请求不到数据
       if (hotelsLoaction) {
-        hotelsLoaction.forEach(function(marker) {
-          new AMap.Marker({
-            map: hotelMap,
-            icon: marker.icon,
-            position: [marker.position[1], marker.position[0]],
-            offset: new AMap.Pixel(-13, -30)
+        if (hotelsLoaction.length > 0) {
+          hotelsLoaction.forEach(function(marker) {
+            new AMap.Marker({
+              map: hotelMap,
+              content: marker.content,
+              position: [marker.position[1], marker.position[0]],
+              offset: new AMap.Pixel(-13, -30)
+            });
           });
-        });
-        hotelMap.setFitView();
+          hotelMap.setFitView();
+
+          // 添加信息弹框
+          
+        } else {
+          hotelMap.setCity(this.$route.query.name);
+        }
       }
-     
     }
   },
 
-  mounted() {
-    
-  }
+  mounted() {}
 };
 </script>
 
 <style lang="less" scoped>
 #container {
   height: 300px;
-  width: 400px;
+  width: 480px;
   margin-top: 30px;
   /deep/ .amap-icon img {
     width: 25px;
     height: 34px;
   }
+  /deep/ .point{
+    height:40px;
+    position:relative;
+  }
+  /deep/ .text{
+      color:white;
+      position:absolute;
+      top:3px;
+      left:10px;
+      font-weight:400;
+    }
 }
+
 </style>
 
