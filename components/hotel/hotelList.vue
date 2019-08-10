@@ -263,6 +263,7 @@ export default {
     webData:{
       handler(newVal,oldVal){
         this.hotelList = JSON.parse(JSON.stringify(this.webData.data))
+        console.log(newVal)
         // 页面加载完获取筛选选项
         this.getOptions();
       },
@@ -290,7 +291,7 @@ export default {
   },
 
   updated(){
-    
+     this.$emit('sendFilterData',this.selected)
   }
 };
 </script>

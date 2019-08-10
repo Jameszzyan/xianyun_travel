@@ -10,6 +10,13 @@ export default {
   props: {
     data: {
       type: Object
+    },
+    // 接受多选选项的数据进行地图更新
+    filterData:{
+      type:Object,
+      default:{
+        data:[]
+      }
     }
   },
 
@@ -26,27 +33,26 @@ export default {
     data: {
       handler(newVal, oldVal) {
         this.renderData = newVal;
-        var show = [];
-        // 找出所有酒店的坐标并配置数字图标
-        newVal.data.forEach((item, index) => {
-          var arr = Object.values(item.location);
-          var markerContent =
-          `<div class="custom-content-marker">
-          <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png" class="point"><span class="text">${index+1}</span>
-          </div>`;
-          
-          var obj = {
-            content: markerContent,
-            position: arr
-          };
-          show.push(obj);
-        });
-        this.hotelsLoaction = show;
+        this.hotelsLoaction = this.setLocation(newVal);
       },
       deep: true,
       immediate: true
     },
 
+    // 监听多选选择的数据进行更新
+    filterData:{
+      handler(newVal, oldVal) {
+         if(newVal){
+           if(newVal.data){
+             this.hotelsLoaction = this.setLocation(newVal);
+           }
+         }
+      },
+      deep: true,
+      immediate: true
+    },
+
+    // 监听变化进行地图更新
     hotelsLoaction(val) {
       this.cityLocated(val);
     },
@@ -85,6 +91,26 @@ export default {
           hotelMap.setCity(this.$route.query.name);
         }
       }
+    },
+
+    // 整理酒店坐标
+    setLocation(newVal){
+       var show = [];
+        // 找出所有酒店的坐标并配置数字图标
+        newVal.data.forEach((item, index) => {
+          var arr = Object.values(item.location);
+          var markerContent =
+          `<div class="custom-content-marker">
+          <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png" class="point"><span class="text">${index+1}</span>
+          </div>`;
+          
+          var obj = {
+            content: markerContent,
+            position: arr
+          };
+          show.push(obj);
+        })
+        return show
     }
   },
 

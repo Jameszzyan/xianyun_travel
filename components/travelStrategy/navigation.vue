@@ -54,6 +54,12 @@ export default {
     getCityName(item){
       console.log(item)
       this.$emit("setCityName",item.city) 
+      this.$router.push({
+        path:'/travelStrategy',
+        query:{
+          name:item.city
+        }
+      })
     },
     // 左侧导航栏
     handleSelect(key, keyPath) {
