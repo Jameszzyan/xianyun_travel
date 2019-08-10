@@ -33,7 +33,7 @@ export default {
         url: "hotels",
         method: "get",
         params: {
-          id: 1 //this.$route.query.id
+          id: this.$route.query.id
         }
       });
       console.log(res);

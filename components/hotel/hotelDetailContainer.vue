@@ -8,8 +8,8 @@
         >{{hotel.big_cate}}</el-breadcrumb-item>
         <el-breadcrumb-item
           :to="{ path: '/hotel',query:{city:hotel.city.id,name:hotel.real_city }}"
-        >南京酒店</el-breadcrumb-item>
-        <el-breadcrumb-item>好来阁商务宾馆</el-breadcrumb-item>
+        >{{hotel.real_city}}酒店</el-breadcrumb-item>
+        <el-breadcrumb-item>{{hotel.name}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <!-- 酒店头部信息 -->
