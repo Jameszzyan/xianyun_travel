@@ -111,6 +111,7 @@ export default {
       top:3px;
       left:10px;
       font-weight:400;
+      font-size:14px;
     }
 }
 
