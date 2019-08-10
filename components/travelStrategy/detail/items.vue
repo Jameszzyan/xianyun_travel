@@ -9,7 +9,7 @@
                 <!-- 评论中的图片 -->
                 <img  width="100px;height:100px" v-for="(picitem,index) in renderData.pics" :key="index" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
                 <div class="clearfix">
-                    <el-button class="button" style="float:right;margin:5px 0;" type="primary">回复</el-button>
+                    <el-button class="button" style="float:right;margin:5px 0;" type="primary" size="mini" @click.native="replyTo(renderData.id,renderData.account.nickname)">回复</el-button>
                 </div>
 
            </div>       
@@ -69,6 +69,11 @@ export default {
     },
 
     methods:{
+        // 点击回复指定评论
+        replyTo(id,nickname){
+            this.$emit("setFollow",{id,nickname})
+        },
+        // 获取父元素
         searchParent(obj){
             if(obj){
                 if(obj.parent){

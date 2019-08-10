@@ -145,12 +145,18 @@ export default {
   },
   methods: {
     // 根据推荐城市搜索
-    searchCitybyRecom(a) {
-      this.$emit("searchCity", a);
+    searchCitybyRecom(a){
+      this.$emit("searchCity",a)
+      this.$router.push({
+        path:'/travelStrategy',
+        query:{
+          name:a
+        }
+      })
     },
     // 搜索城市名
-    searchCity() {
-      this.$emit("searchCity", this.cityName);
+    searchCity(){
+      this.$emit("searchCity",this.cityName)  
     },
     // 写游记跳转
     WriteSomething() {
@@ -184,9 +190,9 @@ export default {
       type: Number,
       default: 3
     },
-    cityName: {
-      type: String,
-      default: ""
+    cityname:{
+      type:String,
+      default:""
     }
   }
 };

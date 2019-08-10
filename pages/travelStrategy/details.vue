@@ -16,7 +16,7 @@
                     攻略：{{  detailInfo.updated_at |setUpdata }} 阅读：{{detailInfo.watch}}
                 </div>
                 <!-- 文章内容 -->
-                <div v-html="detailInfo.content" style="margin:20px 0;overflow:hidden;">
+                <div class="content" v-html="detailInfo.content" style="margin:20px 0">
                 </div>
                 <!-- 评论收藏点赞分享 -->
                 <Icon :detailInfo="detailInfo"/>
@@ -88,7 +88,11 @@ export default {
     }
     .left-container{
         width: 800px;
-        overflow: hidden;
     }
-
+    .content{
+        width: 100%;
+    }
+    .content>>>img{
+        max-width: 100%;
+    }
 </style>

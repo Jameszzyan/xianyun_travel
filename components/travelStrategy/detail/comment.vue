@@ -4,7 +4,14 @@
       <div class="add-comment clearfix">
         <div>评论</div>
         <!-- "http://157.122.54.189:9095/upload" -->
-        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.."></el-input>
+        <el-tag
+         v-if="replyName"
+          closable
+          @close="handleClose()"
+          type="info">
+          回复{{replyName}}:
+      </el-tag>
+        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment"></el-input>
         <el-button type="primary" style="float:right;marginTop:10px;" @click.native="submitComment">提交</el-button>
         <el-upload
         style="float:left;marginTop:10px;"
@@ -31,12 +38,12 @@
                     <span style="float:right;">{{item.updated_at | setUpdata}}</span>
                     <img  width="100px;height:100px" v-for="(picitem,picindex) in item.pics" :key="picindex" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
                     <div>
-                        <el-button style="float:right;marginTop:5px;" type="primary" size="mini">回复</el-button>
+                        <el-button style="float:right;marginTop:5px;" type="primary" size="mini" @click.native="replyTo(item.id,item.account.nickname)">回复</el-button>
                     </div>
 
                 </div>
                 <!-- 通过组件递归来显示该评论下面的父评论 -->
-                <Item v-if="item.parent" class="parentItem" :data="item.parent">
+                <Item v-if="item.parent" class="parentItem" :data="item.parent" @setFollow="setFollow">
 
                </item>
             </div>
@@ -60,8 +67,10 @@ import Item from "@/components/travelStrategy/detail/items"
 export default {
     data() {
       return {
+        // 被回复人的昵称
+        replyName:'',
         // 文章id
-        post:4,
+        post:null,
         //   文件上传
         dialogImageUrl: '',
         dialogVisible: false,
@@ -74,11 +83,28 @@ export default {
         },
         list: [],
         limit:2,
-        currentPage:1,
+        currentPage:0,
         total:0,
       }
     },
     methods: {
+      // 取消回复指定人后
+      // 清除被回复人的nicckname和follow
+      handleClose(){
+        this.commentObj.follow=null,
+        this.replyName=''
+      },
+      // 获取item组件传过来的follow的值
+      setFollow(value){
+        this.commentObj.follow=value.id
+        this.replyName=value.nickname
+      },  
+      // 获取当前组件中点击回复按钮时的follow值
+      replyTo(id,name){
+        this.commentObj.follow=id
+        this.replyName=name
+
+      },
       // 提交评论
       submitComment(){
         this.commentObj.post=this.$route.query.id
@@ -94,6 +120,14 @@ export default {
             type:'info',
             message:res.data.message
           })
+          this.commentObj={
+          content:'',
+          follow:null,
+          pics:[],
+          post:null
+        }
+        this.replyName=''
+
           this.initComment()
 
         })

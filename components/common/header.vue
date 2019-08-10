@@ -16,7 +16,7 @@
               <nuxt-link to="/travelStrategy">旅游攻略</nuxt-link>
             </el-col>
             <el-col :span="3">
-              <nuxt-link to="/hotel?city=199&name=深圳">酒店</nuxt-link>
+              <nuxt-link to="/hotel?city=199&name=深圳" :class="{active:isActive}">酒店</nuxt-link>
             </el-col>
             <el-col :span="3">
               <nuxt-link to="/planeTicket">国内机票</nuxt-link>
@@ -53,12 +53,28 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      isActive:false
+    };
   },
+  // 消除token值
   methods:{
     handleClick(){
       this.$store.dispatch('user/commitClearUserInfo')
+      // 清除loaclStorage里面的值
       // localStorage.removeItem('store')
+    }
+  },
+  
+  watch:{
+    // 监听路由变化改变高亮
+    '$route'(to,from){
+      if(to.path.indexOf('/hotel') > -1){
+          this.isActive = true
+      }
+      else{
+        this.isActive = false
+      }
     }
   }
 };
@@ -96,6 +112,10 @@ export default {
         }
       }
       /deep/ .nuxt-link-exact-active {
+        background: #409eff;
+        color: #fff !important;
+      }
+      .active{
         background: #409eff;
         color: #fff !important;
       }
