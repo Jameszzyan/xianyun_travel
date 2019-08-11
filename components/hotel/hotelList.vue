@@ -263,7 +263,6 @@ export default {
     webData:{
       handler(newVal,oldVal){
         this.hotelList = JSON.parse(JSON.stringify(this.webData.data))
-        console.log(newVal)
         // 页面加载完获取筛选选项
         this.getOptions();
       },
@@ -282,6 +281,7 @@ export default {
       this.price = parseInt(val / 100 * 4000)
     },
 
+    // 每次路由更新需要默认回到第一页
    '$route'(){
      this.currentPage = 1
    }
@@ -290,6 +290,7 @@ export default {
     
   },
 
+  // 多选的数据变化时需要发送到地图组件进行同步
   updated(){
      this.$emit('sendFilterData',this.selected)
   }
