@@ -2,7 +2,7 @@
     <div class="item">
        <div >
            <div class="item-container clearfix" v-if="renderData" style="color:#606266;fontSize:14px;">
-                <items v-if="renderData.parent" class="commentItem" :renderData="data.parent"></items>
+                <items v-if="renderData.parent" class="commentItem" :data="data.parent" @setFollow="setFollow"></items>
 
                 第{{renderData.level}}层 ({{renderData.account.nickname}}) : {{renderData.content}}
                 <span style="float:right;">{{renderData.updated_at | setUpdata}}</span>
@@ -55,11 +55,10 @@ export default {
     watch:{
         data:{
             handler(newVal,oldVal){
-                this.renderData = newVal
+                // this.renderData = newVal
                 if(newVal){
                     this.renderData = newVal
-                    console.log(this.renderData)
-                    if(this.renderData.pics.length > 0) console.log(this.renderData.pics[0])
+                    // if(this.renderData.pics.length > 0) console.log(this.renderData.pics[0])
                 }
 
             },
@@ -73,23 +72,29 @@ export default {
         replyTo(id,nickname){
             this.$emit("setFollow",{id,nickname})
         },
+
+        // 由于递归也是父子组件嵌套，如果需要传值到最早的祖先组件，需要不断传递
+        setFollow(value){
+            this.$emit("setFollow",{id:value.id,nickname:value.nickname})
+        }
+
         // 获取父元素
-        searchParent(obj){
-            if(obj){
-                if(obj.parent){
-                    return this.searchParent(obj.parent)
-                }
-                else{
-                    var name = obj.account.nickname
-                    var id = obj.account.id
-                    var content = obj.content
-                    return id + "." +name + ": " + content
-                }
-            }
-            else{
-                return 123
-            }
-        },
+        // searchParent(obj){
+        //     if(obj){
+        //         if(obj.parent){
+        //             return this.searchParent(obj.parent)
+        //         }
+        //         else{
+        //             var name = obj.account.nickname
+        //             var id = obj.account.id
+        //             var content = obj.content
+        //             return id + "." +name + ": " + content
+        //         }
+        //     }
+        //     else{
+        //         return 123
+        //     }
+        // },
         // handlePictureCardPreview(file) {
         //     this.dialogImageUrl = file.url;
         // }

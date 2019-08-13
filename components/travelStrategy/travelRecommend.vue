@@ -115,7 +115,7 @@
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="pageObj.currentPage"
+            :current-page.sync="pageObj.currentPage"
             :page-sizes="[3, 5, 10, 15]"
             :page-size="pageObj.pagesize"
             layout="total, sizes, prev, pager, next, jumper"
@@ -180,7 +180,13 @@ export default {
       this.$emit("setPage", this.pageObj);
     }
   },
-  // props:["recommendList","total"]
+
+  watch:{
+    '$route'(to,from){
+       this.pageObj.currentPage = 1
+    }
+  },
+
   props: {
     recommendList: {
       type: Array,

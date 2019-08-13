@@ -11,7 +11,7 @@
           type="info">
           回复{{replyName}}:
       </el-tag>
-        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment"></el-input>
+        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment" v-focus="isFocus"></el-input>
         <el-button type="primary" style="float:right;marginTop:10px;" @click.native="submitComment">提交</el-button>
         <el-upload
         style="float:left;marginTop:10px;"
@@ -85,8 +85,23 @@ export default {
         limit:2,
         currentPage:0,
         total:0,
+        // 点击回复进行输入框聚焦
+        isFocus:false
       }
     },
+
+    // 自定义指令
+    directives:{
+        focus:{
+          update:function(el,binding){
+            if(binding.value){
+              var input = document.querySelector(".el-input__inner")
+              input.focus()
+            }
+          }
+        }
+    },
+
     methods: {
       // 取消回复指定人后
       // 清除被回复人的nicckname和follow
@@ -96,14 +111,17 @@ export default {
       },
       // 获取item组件传过来的follow的值
       setFollow(value){
-        this.commentObj.follow=value.id
-        this.replyName=value.nickname
+        if(value){
+          this.commentObj.follow=value.id
+          this.replyName=value.nickname
+        }
+        this.isFocus = true
       },  
       // 获取当前组件中点击回复按钮时的follow值
       replyTo(id,name){
         this.commentObj.follow=id
         this.replyName=name
-
+        this.isFocus = true
       },
       // 提交评论
       submitComment(){
@@ -127,8 +145,7 @@ export default {
           post:null
         }
         this.replyName=''
-
-          this.initComment()
+        this.initComment()
 
         })
       },
@@ -218,7 +235,12 @@ export default {
     watch: {
         $route(to, from) {
         this.initComment()       
-      }
+      },
+    },
+
+    // 组件的updated在指令的update之后
+    updated(){
+      this.isFocus = false
     }
 }
 </script>

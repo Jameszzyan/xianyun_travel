@@ -164,7 +164,6 @@ export default {
             });
         }
         else if(name === "攻略"){
-          console.log("------")
           this.$router.push({
             path:'/travelStrategy',
             query:{
