@@ -14,6 +14,7 @@
         <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment" v-focus="isFocus"></el-input>
         <el-button type="primary" style="float:right;marginTop:10px;" @click.native="submitComment">提交</el-button>
         <el-upload
+        ref="upload"
         style="float:left;marginTop:10px;"
         action="http://157.122.54.189:9095/upload"
         name="files"
@@ -112,7 +113,7 @@ export default {
             this.dialogVisible=true
       },
       // 取消回复指定人后
-      // 清除被回复人的nicckname和follow
+      // 清除被回复人的nickname和follow
       handleClose(){
         this.commentObj.follow=null,
         this.replyName=''
@@ -152,6 +153,7 @@ export default {
           pics:[],
           post:null
         }
+        this.$refs.upload.clearFiles()
         this.replyName=''
         this.initComment()
 
