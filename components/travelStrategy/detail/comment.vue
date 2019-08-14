@@ -19,7 +19,6 @@
         action="http://157.122.54.189:9095/upload"
         name="files"
         list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
         :on-success='handleSucess'
         > 
