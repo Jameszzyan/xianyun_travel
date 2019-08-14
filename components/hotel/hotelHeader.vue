@@ -239,6 +239,7 @@ export default {
        }
     },
 
+    // 选择后进行跳转
     handleSelect(item){
         this.searchCity(item.value)
     }

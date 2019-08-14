@@ -11,7 +11,7 @@
           type="info">
           回复{{replyName}}:
       </el-tag>
-        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment"></el-input>
+        <el-input v-model="commentObj.content" style="marginTop:10px;" placeholder="说点什么啊.." @keyup.native.enter="submitComment" v-focus="isFocus"></el-input>
         <el-button type="primary" style="float:right;marginTop:10px;" @click.native="submitComment">提交</el-button>
         <el-upload
         style="float:left;marginTop:10px;"
@@ -88,8 +88,23 @@ export default {
         limit:2,
         currentPage:0,
         total:0,
+        // 点击回复进行输入框聚焦
+        isFocus:false
       }
     },
+
+    // 自定义指令
+    directives:{
+        focus:{
+          update:function(el,binding){
+            if(binding.value){
+              var input = document.querySelector(".el-input__inner")
+              input.focus()
+            }
+          }
+        }
+    },
+
     methods: {
       // 点击小图显示图片大图
       showImg(url){
@@ -104,14 +119,17 @@ export default {
       },
       // 获取item组件传过来的follow的值
       setFollow(value){
-        this.commentObj.follow=value.id
-        this.replyName=value.nickname
+        if(value){
+          this.commentObj.follow=value.id
+          this.replyName=value.nickname
+        }
+        this.isFocus = true
       },  
       // 获取当前组件中点击回复按钮时的follow值
       replyTo(id,name){
         this.commentObj.follow=id
         this.replyName=name
-
+        this.isFocus = true
       },
       // 提交评论
       submitComment(){
@@ -135,14 +153,13 @@ export default {
           post:null
         }
         this.replyName=''
-
-          this.initComment()
+        this.initComment()
 
         })
       },
       // 文件上传成功
       handleSucess(response, file, fileList){
-            // 我们要的数据就在response，我们要将上传成功之后的图片的路径(相对路径)存储到addForm的pics中
+            // 我们要的数据就在response，我们要将上传成功之后的图片的路径(相对路径)存储到commentObj的pics中
             this.commentObj.pics.push({
               id:response[0].id,
               name:response[0].name,
@@ -160,11 +177,6 @@ export default {
                 
             }
       },
-      //   文件预览
-      // handlePictureCardPreview(file) {
-      //   this.dialogImageUrl = file.url;
-      //   this.dialogVisible = true;
-      // },
       // 改变评论页的条数
       handleSizeChange(val) {
         this.limit=val
@@ -226,7 +238,12 @@ export default {
     watch: {
         $route(to, from) {
         this.initComment()       
-      }
+      },
+    },
+
+    // 组件的updated在指令的update之后
+    updated(){
+      this.isFocus = false
     }
 }
 </script>

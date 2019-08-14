@@ -8,6 +8,9 @@ export default {
   */
   head: {
     title: "闲云旅游网", // 修改title
+    base:[
+      {herf:"https://webapi.amap.com/ui/1.0/ui/overlay/SimpleMarker/examples/custom-icon.html"}
+    ],
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -19,7 +22,9 @@ export default {
       {rel:"stylesheet",type:'text/css', href:"https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"}
     ],
     script:[
-      {src:"https://webapi.amap.com/maps?v=1.4.15&key=31b1cb9437f926245afa7b9db5800e88"}
+      {src:"https://webapi.amap.com/maps?v=1.4.15&key=31b1cb9437f926245afa7b9db5800e88"},
+      {src:"https://webapi.amap.com/ui/1.0/main.js?v=1.0.11"},
+
     ],
   },
 

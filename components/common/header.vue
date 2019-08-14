@@ -13,10 +13,10 @@
               <nuxt-link to="/">首页</nuxt-link>
             </el-col>
             <el-col :span="3">
-              <nuxt-link to="/travelStrategy">旅游攻略</nuxt-link>
+              <nuxt-link to="/travelStrategy" :class="{active:isTravelStrategy}">旅游攻略</nuxt-link>
             </el-col>
             <el-col :span="3">
-              <nuxt-link to="/hotel?city=199&name=深圳" :class="{active:isActive}">酒店</nuxt-link>
+              <nuxt-link to="/hotel?city=199&name=深圳" :class="{active:isHotel}">酒店</nuxt-link>
             </el-col>
             <el-col :span="3">
               <nuxt-link to="/planeTicket">国内机票</nuxt-link>
@@ -54,7 +54,8 @@
 export default {
   data() {
     return {
-      isActive:false
+      isHotel:false,
+      isTravelStrategy:false
     };
   },
   // 消除token值
@@ -70,10 +71,17 @@ export default {
     // 监听路由变化改变高亮
     '$route'(to,from){
       if(to.path.indexOf('/hotel') > -1){
-          this.isActive = true
+          this.isHotel = true
       }
       else{
-        this.isActive = false
+          this.isHotel = false
+      }
+
+      if(to.path.indexOf('/travelStrategy') > -1){
+           this.isTravelStrategy = true
+      }
+      else{
+           this.isTravelStrategy = false
       }
     }
   }
