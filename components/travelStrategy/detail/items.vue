@@ -2,12 +2,15 @@
     <div class="item">
        <div >
            <div class="item-container clearfix" v-if="renderData" style="color:#606266;fontSize:14px;">
-                <items v-if="renderData.parent" class="commentItem" :renderData="data.parent"></items>
+                <items v-if="renderData.parent" class="commentItem" :data="data.parent"></items>
 
                 第{{renderData.level}}层 ({{renderData.account.nickname}}) : {{renderData.content}}
                 <span style="float:right;">{{renderData.updated_at | setUpdata}}</span>
                 <!-- 评论中的图片 -->
-                <img  width="100px;height:100px" v-for="(picitem,index) in renderData.pics" :key="index" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
+                <img @click="showImg(picitem.url)" width="100px;height:100px" v-for="(picitem,index) in renderData.pics" :key="index" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
+                <el-dialog :visible.sync="dialogVisible" size="tiny">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
                 <div class="clearfix">
                     <el-button class="button" style="float:right;margin:5px 0;" type="primary" size="mini" @click.native="replyTo(renderData.id,renderData.account.nickname)">回复</el-button>
                 </div>
@@ -25,8 +28,9 @@ export default {
     data () {
         return {
             newList:[],
-            renderData:{}
-            // dialogImageUrl: 'http://157.122.54.189:9095/uploads/89653dd21c71402babe60eb9f759f7e2.png'
+            renderData:{},
+            dialogImageUrl:'',
+            dialogVisible:false
         }
     },
 
@@ -69,6 +73,11 @@ export default {
     },
 
     methods:{
+        // 点击小图显示图片大图
+        showImg(url){
+            this.dialogImageUrl='http://157.122.54.189:9095'+url
+            this.dialogVisible=true
+        },
         // 点击回复指定评论
         replyTo(id,nickname){
             this.$emit("setFollow",{id,nickname})
@@ -89,10 +98,7 @@ export default {
             else{
                 return 123
             }
-        },
-        // handlePictureCardPreview(file) {
-        //     this.dialogImageUrl = file.url;
-        // }
+        }
     },
     
 }

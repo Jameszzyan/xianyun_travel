@@ -36,7 +36,10 @@
                     第{{item.level}}层 ({{item.account.nickname}}) : {{item.content}}
                     
                     <span style="float:right;">{{item.updated_at | setUpdata}}</span>
-                    <img  width="100px;height:100px" v-for="(picitem,picindex) in item.pics" :key="picindex" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
+                    <img @click="showImg(picitem.url)" width="100px;height:100px" v-for="(picitem,picindex) in item.pics" :key="picindex" :src="`http://157.122.54.189:9095${picitem.url}`" alt="">
+                    <el-dialog :visible.sync="dialogVisible" size="tiny">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
                     <div>
                         <el-button style="float:right;marginTop:5px;" type="primary" size="mini" @click.native="replyTo(item.id,item.account.nickname)">回复</el-button>
                     </div>
@@ -88,6 +91,11 @@ export default {
       }
     },
     methods: {
+      // 点击小图显示图片大图
+      showImg(url){
+            this.dialogImageUrl='http://157.122.54.189:9095'+url
+            this.dialogVisible=true
+      },
       // 取消回复指定人后
       // 清除被回复人的nicckname和follow
       handleClose(){
@@ -153,10 +161,10 @@ export default {
             }
       },
       //   文件预览
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      },
+      // handlePictureCardPreview(file) {
+      //   this.dialogImageUrl = file.url;
+      //   this.dialogVisible = true;
+      // },
       // 改变评论页的条数
       handleSizeChange(val) {
         this.limit=val
