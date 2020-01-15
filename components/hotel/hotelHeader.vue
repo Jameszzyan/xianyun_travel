@@ -68,6 +68,8 @@ export default {
 
   data() {
     return {
+      // 测试分支使用
+      test: "",
       // 搜索城市
       citySearch: "",
       // 用户定位城市
